@@ -1,0 +1,279 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import pylab as pl
+import numpy as np
+%matplotlib inline
+
+
+import urllib.request
+url = 'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/ML0101ENv3/labs/FuelConsumptionCo2.csv'
+csv = urllib.request.urlopen(url).read() 
+with open('FuelConsumption.csv', 'wb') as fx: # bytes, hence mode 'wb'
+    fx.write(csv)
+
+df = pd.read_csv("FuelConsumption.csv")
+
+# take a look at the dataset
+df.head()
+df.describe
+
+cdf = df[['ENGINESIZE','CYLINDERS','FUELCONSUMPTION_COMB','CO2EMISSIONS']]
+cdf.head(9)
+
+viz=df[['CYLINDERS','ENGINESIZE','CO2EMISSIONS','FUELCONSUMPTION_COMB']]
+
+viz
+
+plt.scatter(viz.CYLINDERS,viz.CO2EMISSIONS,color='red')
+plt.xlabel('cylinders')
+plt.ylabel('co2emissions')
+plt.show()
+
+
+#training and testing dataset
+
+msk=np.random.rand(len(df))<0.8
+train=cdf[msk]
+test=cdf[~msk]
+
+
+#plotting train
+plt.scatter(train.ENGINESIZE,train.CO2EMISSIONS,color='Blue')
+plt.xlabel('Enginesize')
+plt.ylabel('co2emissions')
+
+
+
+
+from sklearn import linear_model
+regr=linear_model.LinearRegression()
+train_x=np.asanyarray(train[['ENGINESIZE']])
+train_x
+train_y=np.asanyarray(train[['CO2EMISSIONS']])
+train_y
+regr.fit(train_x,train_y)
+print(regr.coef_)
+print(regr.intercept_)
+
+plt.scatter(cdf.ENGINESIZE,cdf.CO2EMISSIONS,color='BLUE')
+plt.plot(train_x,regr.coef_[0][0]*train_x+ regr.intercept_[0],'_r')
+plt.xlabel('EngineSize')
+plt.ylabel('co2emissions')
+
+
+
+regr.coef_[0][0]
+regr.intercept_[0]
+regr.intercept_
+regr.coef_
+
+
+from sklearn.metrics import r2_score
+
+test_x = np.asanyarray(test[['ENGINESIZE']])
+test_y = np.asanyarray(test[['CO2EMISSIONS']])
+test_y_hat = regr.predict(test_x)
+
+print("Mean absolute error: %.2f" % np.mean(np.absolute(test_y_hat - test_y)))
+print("Residual sum of squares (MSE): %.2f" % np.mean((test_y_hat - test_y) ** 2))
+print("R2-score: %.2f" % r2_score(test_y_hat , test_y) )
+
+
+
+
+
+##multiple regression
+from sklearn import linear_model
+regr=linear_model.LinearRegression()
+train_x=np.asanyarray(train[['ENGINESIZE','CYLINDERS','FUELCONSUMPTION_COMB']])
+train_y=np.asanyarray(train[['CO2EMISSIONS']])
+regr.fit(train_x,train_y)
+regr.intercept_
+regr.coef_
+
+//y_hat= regr.predict(test[['ENGINESIZE','CYLINDERS','FUELCONSUMPTION_COMB']])
+x = np.asanyarray(test[['ENGINESIZE','CYLINDERS','FUELCONSUMPTION_COMB']])
+y = np.asanyarray(test[['CO2EMISSIONS']])
+
+y_hat=regr.predict(x)
+
+print("Residual sum of squares: %.2f"
+      % np.mean((y_hat - y) ** 2))
+
+# Explained variance score: 1 is perfect prediction
+print('Variance score: %.2f' % regr.score(x, y))
+
+#KNN
+import urllib.request
+url = 'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/ML0101ENv3/labs/teleCust1000t.csv'
+csv = urllib.request.urlopen(url).read() 
+with open('teleCust1000t.csv', 'wb') as fx: # bytes, hence mode 'wb'
+    fx.write(csv)
+df = pd.read_csv('teleCust1000t.csv')
+df.head()
+
+df['custcat'].value_counts()
+df.hist(column='income', bins=50)
+X = df[['region', 'tenure','age', 'marital', 'address', 'income', 'ed', 'employ','retire', 'gender', 'reside']] .values  #.astype(float)
+X[0:5]
+
+error=0.50
+while error>1:
+    error=error/4
+    print (error)
+    
+    
+for i in X:
+    print(i)
+    
+
+def square(value):
+    new_value=value**2;
+    print(new_value)
+
+square(2)
+
+
+def power(value):
+    new_value=value**value;
+    print(new_value)
+
+power(2)
+
+
+
+power1= lambda x,y:x**y
+
+
+power1(5,2)
+
+
+
+nums=[1,2,3,4,12]
+update_nums=[num+1 for num in nums]
+update_nums
+
+updated_nums=[]
+for num in nums:
+    updated_nums.append(num+1)
+    
+    
+updated_nums
+
+
+[num **2 for num in range(5) if num%2==0]
+
+range(10)
+
+
+
+[num if num%2!=0 else 0 for num in range(10) ]
+
+#0,8,64..
+
+listt=[num ** 3 if num%2==0 else 0  for num in range(5) ]
+
+[(index,num) for index,num in enumerate(listt) if num>4]
+
+
+[num for num in enumerate(listt)]
+
+listt[listt>5]
+
+import numpy as np
+from numpy import array
+
+
+n1=np.array([1,2,3])
+
+n2=array([1,2,3])
+
+n1[n1>2]
+
+n2[n2>2]
+
+
+np.zeros(10, dtype=int)
+np.full((2,5),1.11)
+np.ones((3,3),dtype=float)
+np.diag([1,2,3,4])
+
+np.random.random((3,3))
+
+
+x2=np.array([ [3, 5, 2, 4],[7, 6, 8, 8],[1, 6, 7, 7]])
+
+Creating Sub Arrays
+
+x2_sub = x2[:2, :1]
+
+
+print(x2_sub)
+
+
+
+grid=np.arange(1,10).reshape((3,3))
+
+
+a = np.array([1,2,3])
+
+b = np.array([5,2,6])
+
+a+b
+a%b
+b%a
+print(grid)
+[[3 5], [ 7 6]]
+
+
+
+x = np.arange(4)
+x
+
+
+
+a=np.array([[1,2],[1,2]],dtype=int)
+print(a)
+
+np.cov(a)
+
+
+
+
+def fact(n):
+    i=1;
+    fact=1;
+    for i in range(1,n+1):
+        fact=fact*i
+    print (fact)
+
+fact(5)
+
+
+
+def sorr(n):
+    n1=np.array(n)
+    n2=[]
+    for i in n1:
+        m=np.min(n1)
+        n2.append(m)
+        np.delete(n2,m)
+    print(n2)
+
+n=[5,3,6,7,8,1]
+
+m=np.min(n)
+n2=[]
+n2.append(m)
+n2
+np.delete(n,)    
+np.dele
+
+
+import pandas as pd
+
+area=pd.Series({"Chennai":123,"Madras":123,"NY":231})
+pop=pd.Series({"Chennai":123,"Madras":123,"NY":231})
+
+data=pd.DataFrame({'area':area,'pop':pop})
+data

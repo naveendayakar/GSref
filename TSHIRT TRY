@@ -1,0 +1,247 @@
+import numpy as np
+import pandas as pd
+pip.main(['install','twitter'])
+pip.main(['install','textblob'])
+from twitter import Twitter
+from twitter import OAuth
+from twitter import TwitterHTTPError
+from twitter import TwitterStream
+import json 
+from pandas.io.json import json_normalize
+
+
+
+ck='Y1mLW9IApc7rx3nCynXOsx0FH'
+cs='j3K0YIMdorVQhm31TfDyULsrVFGAohowwO1SEM59MjcxSphMwN'
+at='961675725085560836-H9A7MqmaxmY1q3OhgwgABvKyQVvR6n0'
+ats='8tziPF38vyCtmDGKUJ2ppNzaJwmW9ci3mwv3jbwFSUxTe'
+
+oauth = OAuth(at, ats, ck, cs)
+
+api = Twitter(auth=oauth)
+
+#getting 1000 tweets
+df = pd.DataFrame()
+mid=0
+
+for i in range(11):
+    if i==0:
+        search_result=api.search.tweets(q='NRA',count=100)
+    else:
+        search_result=api.search.tweets(q='NRA',count=100,max_id = mid)
+        dftemp= json_normalize(search_result,'statuses')
+        mid=dftemp['id'].min()
+        mid=mid-1
+        df = df.append(dftemp, ignore_index= True)
+
+
+df
+df2=json_normalize(df['user'])
+df2.dtypes
+df2['screen_name']
+
+
+##use this for tshirt
+pip.main(["install","textblob"])
+!python -m textblob.download_corpora
+from textblob import TextBlob
+
+tweettext=df['text']
+df2= json_normalize(df['user'])
+
+wordlist= pd.DataFrame()
+
+polarity=[]
+subj=[]
+for t in tweettext:
+    tx=TextBlob(t)
+    polarity.append(tx.sentiment.polarity)
+    subj.append(tx.sentiment.subjectivity)
+    
+poltweet= pd.DataFrame({'polarity': polarity, 'subjectivity': subj})
+poltweet.plot(title= 'Polarity and Subjectivity')
+
+
+df['polarity']=polarity
+df.head()
+
+posdf=pd.DataFrame()
+negdf=pd.DataFrame()
+
+posdf=df[df['polarity']>0.7]
+negdf=df[df['polarity']<-0.7]
+posdf.columns
+
+
+posdf[['user','polarity']]
+negdf[['user','polarity']]
+
+df2=json_normalize(df['user'])
+df2.columns
+posdf.columns
+posdf['user']
+json_normalize(df['user'])
+json_normalize(posdf['user'])
+
+df3=pd.merge(df,posdf,on='id')
+newpos=json_normalize(df3['user_y'])
+newpos['screen_name']
+df3.columns
+df3.polarity_y
+df3
+posdffinal=pd.DataFrame()
+posdffinal['name']=newpos['screen_name']
+posdffinal['pol']=df3['polarity_y']
+posdffinal
+
+df4=pd.merge(df,negdf,on='id')
+df4
+newneg=json_normalize(df4['user_y'])
+negdffinal=pd.DataFrame()
+negdffinal['name']=newneg['screen_name']
+negdffinal['pol']=df4['polarity_y']
+negdffinal
+
+##stop here
+
+
+
+
+posdf.columns
+df.columns
+
+df3=[]
+
+df2=json_normalize(df['user'])
+df2.columns
+
+
+
+
+posdf2=json_normalize(posdf['user'])
+list(posdf2.columns)
+
+posdf2 = df2[['name']].loc[posdf['id']]
+posdf2
+pospol
+df2
+df.dtypes
+posdf.dtypes
+
+posdf2=json_normalize(posdf['user'])
+posdf2
+
+posdf.columns
+posdf2= json_normalize(posdf['user'])
+
+df.columns
+negdf
+posdf.columns
+newpos=pd.DataFrame()
+newneg=pd.DataFrame()
+
+newpos=json_normalize(posdf['user'])
+
+newneg=negdf['user']
+newneg.columns
+
+
+nparray = np.array(polarity)
+positivepol = nparray[nparray>0.7]
+pospol = nparray>0.7
+positivepol
+print(pospol)
+
+negativepol = nparray[nparray<-0.7]
+negpol = nparray<-0.7
+negativepol
+negpol
+newdf = json_normalize(df['user'])
+newdf.columns
+
+positivepoldf = pd.DataFrame()
+positivepoldf = newdf[['name']].loc[pospol]
+newdf.columns
+
+positivepoldf
+positivepoldf['pol'] = positivepol
+print(positivepoldf)
+print(positivepoldf.shape)
+
+negativepoldf = pd.DataFrame()
+negativepoldf = newdf[['name']].loc[negpol]
+negativepoldf
+negativepoldf['pol'] = negativepol
+print(negativepoldf)
+print(negativepoldf.shape)
+
+
+
+
+
+
+tweettext=df['text']
+
+pol=[]
+ts=[]
+for t in tweettext:
+    tx=TextBlob(t)
+    if(tx.sentiment.polarity>=0.7):
+        ts.append('True')
+        pol.append(tx.sentiment.polarity)
+    elif(tx.sentiment.polarity<=-0.7):
+        ts.append('False')
+        pol.append(tx.sentiment.polarity)
+
+pol
+ts
+
+
+df['Polarity']=pol
+df['Tshirt']=ts
+
+
+df.head()
+df['tshirt']
+
+
+
+
+##question 19 try out
+df = pd.DataFrame()
+mid=0
+
+for i in range(11):
+    if i==0:
+        search_result=api.search.tweets(q='NRA',count=100)
+    else:
+        search_result=api.search.tweets(q='NRA',count=100,max_id = mid)
+        dftemp= json_normalize(search_result,'statuses')
+        mid=dftemp['id'].min()
+        mid=mid-1
+        df = df.append(dftemp, ignore_index= True)
+
+
+df
+
+tweettext=df['text']
+polarity=[]
+subj=[]
+for t in tweettext:
+    tx=TextBlob(t)
+    polarity.append(tx.sentiment.polarity)
+    subj.append(tx.sentiment.subjectivity)
+
+
+df['polarity']=polarity
+
+posdf=pd.DataFrame()
+posdf=df[df['polarity']>=0.7]
+posdf=[['user','polarity']]
+df3=pd.DataFrame()
+df3=pd.merge(df,posdf,on='id')
+newpos=json_normalize(df3['user'])
+df5=pd.DataFrame()
+df5['name']=newpos['screen_name']
+df5['polarity']=df3['polarity']
+df5

@@ -1,0 +1,107 @@
+import numpy as np
+import pandas as pd
+pip.main(['install','twitter'])
+pip.main(['install','textblob'])
+from twitter import Twitter
+from twitter import OAuth
+from twitter import TwitterHTTPError
+from twitter import TwitterStream
+import json 
+from pandas.io.json import json_normalize
+
+
+
+ck='Y1mLW9IApc7rx3nCynXOsx0FH'
+cs='j3K0YIMdorVQhm31TfDyULsrVFGAohowwO1SEM59MjcxSphMwN'
+at='961675725085560836-H9A7MqmaxmY1q3OhgwgABvKyQVvR6n0'
+ats='8tziPF38vyCtmDGKUJ2ppNzaJwmW9ci3mwv3jbwFSUxTe'
+
+oauth = OAuth(at, ats, ck, cs)
+
+api = Twitter(auth=oauth)
+
+## getting 1000 tweets
+df = pd.DataFrame()
+mid=0
+
+for i in range(11):
+    if i==0:
+        search_result=api.search.tweets(q='NRA',count=100)
+    else:
+        search_result=api.search.tweets(q='NRA',count=100,max_id = mid)
+        dftemp= json_normalize(search_result,'statuses')
+        mid=dftemp['id'].min()
+        mid=mid-1
+        df = df.append(dftemp, ignore_index= True)
+
+
+df.head()
+df.columns
+df.shape
+list(df.columns)
+df.shape
+
+
+df['text']
+df['id']
+df['created_at']
+df['user.id']
+df['user.name']
+df2= json_normalize(df['user'])
+df2
+df2['screen_name']
+df['text']
+
+df3=[]
+df3['Tweet']=df['text']
+df3['name']=df2['screen_name']
+df3
+import json 
+from pandas.io.json import json_normalize
+
+df.head()
+
+list(df.columns)
+df.shape
+
+
+
+
+pip.main(["install","textblob"])
+!python -m textblob.download_corpora
+from textblob import TextBlob
+
+tweettext=df['text']
+df2= json_normalize(df['user'])
+
+wordlist= pd.DataFrame()
+
+for t in tweettext:
+    tx=TextBlob(t)
+    polarity.append(tx.sentiment.polarity)
+    subj.append(tx.sentiment.subjectivity)
+    
+poltweet= pd.DataFrame({'polarity': polarity, 'subjectivity': subj})
+poltweet.plot(title= 'Polarity and Subjectivity')
+
+pos=[]
+neg=[]
+df3=[]
+for t in tweettext:
+    tx=TextBlob(t)
+    if(tx.sentiment.polarity)>=0.7:
+        df['polarity']=tx.sentiment.polarity
+        df['status']=True
+    elif(tx.sentiment.polarity)<=-0.7:   
+        df['polarity']=tx.sentiment.polarity
+        df['status']=False
+   
+    
+df3=[]
+
+df3=df[['polarity','status']]
+df3    
+poltweet= pd.DataFrame({'polarity': polarity, 'subjectivity': subj})
+poltweet.plot(title= 'Polarity and Subjectivity')
+
+
